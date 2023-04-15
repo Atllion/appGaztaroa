@@ -3,27 +3,91 @@ import Calendario from './CalendarioComponent';
 import { EXCURSIONES } from '../comun/excursiones';
 import DetalleExcursion from './DetalleExcursionComponent';
 import { View } from 'react-native';
+import Home from './HomeComponent';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { NavigationContainer } from '@react-navigation/native';
+import Constants from 'expo-constants';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-class Campobase extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      excursiones: EXCURSIONES,
-      seleccionExcursion: null
-    };
+const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
 
-  }
-  onSeleccionExcursion(excursionId) {
-    this.setState({seleccionExcursion: excursionId})
-  }  
+function CalendarioNavegador() {
+  return (
+    <Stack.Navigator
+      initialRouteName="Calendario"
+      headerMode="float"
+      screenOptions={{
+        headerTintColor: '#fff',
+        headerStyle: { backgroundColor: '#015afc' },
+        headerTitleStyle: { color: '#fff' },
+      }}
+    >
+      <Stack.Screen
+        name="Calendario"
+        component={Calendario}
+        options={{
+          title: 'Calendario Gaztaroa',
+        }}
+      />
+      <Stack.Screen
+        name="DetalleExcursion"
+        component={DetalleExcursion}
+        options={{
+          title: 'Detalle Excursión',
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
 
+function HomeNavegador() {
+  return (
+    <Stack.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+   headerMode: 'screen',
+        headerTintColor: '#fff',
+        headerStyle: { backgroundColor: '#015afc' },
+        headerTitleStyle: { color: '#fff' },
+      }}
+    >
+      <Stack.Screen
+        name="Etxea"
+        component={Home}
+        options={{
+          title: 'Campo Base',
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function DrawerNavegador() {
+  return (
+      <Drawer.Navigator
+      initialRouteName=" Drawer"
+      screenOptions={{
+        headerShown: false,
+        drawerStyle: {
+          backgroundColor: '#c2d3da',
+        },
+      }}
+      >
+        <Drawer.Screen name="Home" component={HomeNavegador} />
+        <Drawer.Screen name="Calendario" component={CalendarioNavegador} />
+      </Drawer.Navigator>
+  );
+}
+
+class Campobase extends Component { 
   render() {
- 
     return (
-      <View>
-          <DetalleExcursion excursion={this.state.excursiones.filter((excursion) => excursion.id === this.state.seleccionExcursion)[0]} />
-          <Calendario excursiones={this.state.excursiones} onPress={( excursionId) => this. onSeleccionExcursion(excursionId)} />
-      </View>        
+      <NavigationContainer  >
+        <View style={{flex:1, paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight }}>
+          <DrawerNavegador />
+        </View>      
+      </NavigationContainer>         
   );
 
   }
