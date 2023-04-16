@@ -8,6 +8,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import Constants from 'expo-constants';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import QuienesSomos from './QuienesSomosComponent';
+import Contact from './ContactoComponent';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -16,8 +18,10 @@ function CalendarioNavegador() {
   return (
     <Stack.Navigator
       initialRouteName="Calendario"
-      headerMode="float"
       screenOptions={{
+        title: 'Aligned Center',
+        headerTitleAlign: 'center',
+        headerMode: "float",
         headerTintColor: '#fff',
         headerStyle: { backgroundColor: '#015afc' },
         headerTitleStyle: { color: '#fff' },
@@ -46,7 +50,9 @@ function HomeNavegador() {
     <Stack.Navigator
       initialRouteName="Home"
       screenOptions={{
-   headerMode: 'screen',
+        title: 'Aligned Center',
+        headerTitleAlign: 'center',
+        headerMode: 'screen',
         headerTintColor: '#fff',
         headerStyle: { backgroundColor: '#015afc' },
         headerTitleStyle: { color: '#fff' },
@@ -65,7 +71,7 @@ function HomeNavegador() {
 
 function DrawerNavegador() {
   return (
-      <Drawer.Navigator
+    <Drawer.Navigator
       initialRouteName=" Drawer"
       screenOptions={{
         headerShown: false,
@@ -73,22 +79,72 @@ function DrawerNavegador() {
           backgroundColor: '#c2d3da',
         },
       }}
-      >
-        <Drawer.Screen name="Home" component={HomeNavegador} />
-        <Drawer.Screen name="Calendario" component={CalendarioNavegador} />
-      </Drawer.Navigator>
+    >
+      <Drawer.Screen name="Home" component={HomeNavegador} />
+      <Drawer.Screen name="Quienes somos" component={QuienesSomosNavegador} />
+      <Drawer.Screen name="Calendario" component={CalendarioNavegador} />
+      <Drawer.Screen name="Contacto" component={ContactNavegador} />
+    </Drawer.Navigator>
   );
 }
 
-class Campobase extends Component { 
+function ContactNavegador() {
+  return (
+    <Stack.Navigator
+      initialRouteName="Contacto"
+      screenOptions={{
+        title: 'Aligned Center',
+        headerTitleAlign: 'center',
+        headerMode: 'screen',
+        headerTintColor: '#fff',
+        headerStyle: { backgroundColor: '#015afc' },
+        headerTitleStyle: { color: '#fff' },
+      }}
+    >
+      <Stack.Screen
+        name="Contacto"
+        component={Contact}
+        options={{
+          title: 'Contaco',
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function QuienesSomosNavegador() {
+  return (
+    <Stack.Navigator
+      initialRouteName="Quienes Somos"
+      screenOptions={{
+        title: 'Aligned Center',
+        headerTitleAlign: 'center',
+        headerMode: 'screen',
+        headerTintColor: '#fff',
+        headerStyle: { backgroundColor: '#015afc' },
+        headerTitleStyle: { color: '#fff' },
+      }}
+    >
+      <Stack.Screen
+        name="QuienesSomos"
+        component={QuienesSomos}
+        options={{
+          title: 'QuienesSomos',
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+class Campobase extends Component {
   render() {
     return (
       <NavigationContainer  >
-        <View style={{flex:1, paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight }}>
+        <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight }}>
           <DrawerNavegador />
-        </View>      
-      </NavigationContainer>         
-  );
+        </View>
+      </NavigationContainer>
+    );
 
   }
 }

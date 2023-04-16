@@ -17,10 +17,7 @@ class Calendario extends Component {
 
     const renderCalendarioItem = ({item, index}) => {
         return (
-            <ListItem
-            key={index}
-            onPress={() => navigate('DetalleExcursion', { excursionId: item.id })}
-            bottomDivider>
+            <ListItem key={index} onPress={() => navigate('DetalleExcursion', { excursionId: item.id })} bottomDivider>
                 <Avatar source={require('./imagenes/40Años.png')} />
                 <ListItem.Content>
                     <ListItem.Title>{item.nombre}</ListItem.Title>
