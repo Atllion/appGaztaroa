@@ -5,13 +5,13 @@ import Campobase from './componentes/CampobaseComponent';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function App() {
-  return(
-  <SafeAreaProvider>
-    <View style={styles.container}>
-      <Campobase/>
-      <StatusBar style="auto" />
-    </View>
-  </SafeAreaProvider>
+  return (
+    <SafeAreaProvider>
+      <View style={styles.container}>
+        <Campobase />
+        <StatusBar style="auto" />
+      </View>
+    </SafeAreaProvider>
   );
 }
 
