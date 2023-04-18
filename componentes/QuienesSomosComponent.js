@@ -6,6 +6,7 @@ import { CABECERAS } from '../comun/cabeceras';
 import { ACTIVIDADES } from '../comun/actividades';
 import { FlatList } from 'react-native-gesture-handler';
 import { Avatar, ListItem } from 'react-native-elements';
+import { baseUrl } from '../comun/comun';
 
 function RenderItem(props) {
 
@@ -15,7 +16,7 @@ function RenderItem(props) {
         return (
 
             <ListItem bottomDivider>
-                <Avatar source={require('./imagenes/40Años.png')} />
+                <Avatar source={{uri: baseUrl + item.imagen}} />
                 <ListItem.Content>
                     <ListItem.Title>{item.nombre}</ListItem.Title>
                     <ListItem.Subtitle>{item.descripcion}</ListItem.Subtitle>

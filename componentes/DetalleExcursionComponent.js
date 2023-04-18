@@ -4,7 +4,7 @@ import { Card, Icon } from '@rneui/themed';
 import { EXCURSIONES } from '../comun/excursiones';
 import { COMENTARIOS } from '../comun/comentarios';
 import { NavigationContainer, DrawerActions } from '@react-navigation/native';
-
+import { baseUrl } from '../comun/comun';
 function RenderExcursion(props) {
 
     const excursion = props.excursion;
@@ -14,7 +14,7 @@ function RenderExcursion(props) {
             <Card>
                 <Card.Title>{excursion.nombre}</Card.Title>
                 <Card.Divider />
-                <Card.Image source={require('./imagenes/40Años.png')}></Card.Image>
+                <Card.Image source={{uri: baseUrl + excursion.imagen}}></Card.Image>
                 <Text style={{ margin: 20 }}>
                     {excursion.descripcion}
                 </Text>
