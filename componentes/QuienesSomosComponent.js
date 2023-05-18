@@ -5,6 +5,7 @@ import { FlatList } from "react-native-gesture-handler";
 import { Avatar, ListItem } from "react-native-elements";
 import { baseUrl } from "../comun/comun";
 import { connect } from "react-redux";
+import { IndicadorActividad } from "./IndicadorActividadComponent";
 
 const mapStateToProps = (state) => {
   return {
@@ -55,21 +56,40 @@ function Historia() {
 
 class QuienesSomos extends Component {
   render() {
-    return (
-      <ScrollView>
-        <Historia />
-        <Card>
-          <Card.Title>Actividad y recursos</Card.Title>
+    if (this.props.actividades.isLoading) {
+      return (
+        <ScrollView>
+          <Historia />
+          <Card>
+            <Card.Title>Actividades y recursos</Card.Title>
+            <Card.Divider />
+            <IndicadorActividad />
+          </Card>
+        </ScrollView>
+      );
+    } else if (this.props.actividades.errMess) {
+      return (
+        <View>
+          <Text>{this.props.actividades.errMess}</Text>
+        </View>
+      );
+    } else {
+      return (
+        <ScrollView>
+          <Historia />
+          <Card>
+            <Card.Title>Actividad y recursos</Card.Title>
 
-          <FlatList
-            scrollEnabled={false}
-            data={this.props.actividades.actividades}
-            renderItem={RenderItem}
-            keyExtractor={(item) => item.id.toString()}
-          />
-        </Card>
-      </ScrollView>
-    );
+            <FlatList
+              scrollEnabled={false}
+              data={this.props.actividades.actividades}
+              renderItem={RenderItem}
+              keyExtractor={(item) => item.id.toString()}
+            />
+          </Card>
+        </ScrollView>
+      );
+    }
   }
 }
 
