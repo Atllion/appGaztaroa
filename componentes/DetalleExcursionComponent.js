@@ -1,13 +1,11 @@
 import React, { Component } from "react";
 import { Text, View, ScrollView, FlatList } from "react-native";
 import { Card, Icon } from "@rneui/themed";
-import { NavigationContainer, DrawerActions } from "@react-navigation/native";
 import { baseUrl } from "../comun/comun";
 import { connect } from "react-redux";
 
 const mapStateToProps = (state) => {
   return {
-    actividades: state.actividades,
     comentarios: state.comentarios,
     excursiones: state.excursiones,
   };
@@ -71,8 +69,6 @@ class DetalleExcursion extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      excursiones: EXCURSIONES,
-      comentarios: COMENTARIOS,
       favoritos: [],
     };
   }
@@ -92,7 +88,7 @@ class DetalleExcursion extends Component {
         />
 
         <RenderComentario
-          comentarios={this.state.comentarios.filter(
+          comentarios={this.props.comentarios.comentarios.filter(
             (comentario) => comentario.excursionId === excursionId
           )}
         />
