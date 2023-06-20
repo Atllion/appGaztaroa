@@ -16,7 +16,7 @@ let locationsOfInteres = [
     title: "Segundo",
     location: {
       latitude: 42.48,
-      longitude: -1.5,
+      longitude: -1.51,
     },
     description: "Cabezon de Etxauri",
   },
