@@ -24,6 +24,8 @@ import {
   fetchCabeceras,
   fetchActividades,
 } from "../redux/ActionCreators";
+import Login from "./Login";
+import Map from "./Map";
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -89,6 +91,13 @@ function CalendarioNavegador({ navigation }) {
         ),
       }}
     >
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{
+          title: "Calendario Gaztaroa",
+        }}
+      />
       <Stack.Screen
         name="Calendario"
         component={Calendario}
@@ -190,6 +199,24 @@ function DrawerNavegador() {
         }}
       />
       <Drawer.Screen
+        name="Login"
+        component={LoginNavegador}
+        options={{
+          drawerIcon: ({ tintColor }) => (
+            <Icon name="gear" type="font-awesome" size={24} color={tintColor} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Maps"
+        component={MapNavegador}
+        options={{
+          drawerIcon: ({ tintColor }) => (
+            <Icon name="map" type="font-awesome" size={24} color={tintColor} />
+          ),
+        }}
+      />
+      <Drawer.Screen
         name="Contacto"
         component={ContactNavegador}
         options={{
@@ -233,6 +260,70 @@ function ContactNavegador({ navigation }) {
         component={Contact}
         options={{
           title: "Contacto",
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function LoginNavegador({ navigation }) {
+  return (
+    <Stack.Navigator
+      initialRouteName="Login"
+      screenOptions={{
+        title: "Aligned Center",
+        headerTitleAlign: "center",
+        headerMode: "screen",
+        headerTintColor: "#fff",
+        headerStyle: { backgroundColor: colorGaztaroaOscuro },
+        headerTitleStyle: { color: "#fff" },
+        headerLeft: () => (
+          <Icon
+            name="menu"
+            size={28}
+            color="white"
+            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+          />
+        ),
+      }}
+    >
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{
+          title: "Login",
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function MapNavegador({ navigation }) {
+  return (
+    <Stack.Navigator
+      initialRouteName="Map"
+      screenOptions={{
+        title: "Aligned Center",
+        headerTitleAlign: "center",
+        headerMode: "screen",
+        headerTintColor: "#fff",
+        headerStyle: { backgroundColor: colorGaztaroaOscuro },
+        headerTitleStyle: { color: "#fff" },
+        headerLeft: () => (
+          <Icon
+            name="menu"
+            size={28}
+            color="white"
+            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+          />
+        ),
+      }}
+    >
+      <Stack.Screen
+        name="Map"
+        component={Map}
+        options={{
+          title: "Map",
         }}
       />
     </Stack.Navigator>

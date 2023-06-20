@@ -11,6 +11,20 @@ export const comentarios = (
     case ActionTypes.COMENTARIOS_FAILED:
       return { ...state, errMess: action.payload };
 
+    case ActionTypes.ADD_COMENTARIO:
+      const id = state.comentarios.length;
+      const nuevoComentario = {
+        id: id,
+        excursionId: action.payload.excursionId,
+        valoracion: action.payload.valoracion,
+        comentario: action.payload.comentario,
+        autor: action.payload.autor,
+        dia: action.payload.dia,
+      };
+      return {
+        ...state,
+        comentarios: state.comentarios.concat(nuevoComentario),
+      };
     default:
       return state;
   }

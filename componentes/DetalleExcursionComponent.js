@@ -3,7 +3,13 @@ import { Text, View, ScrollView, FlatList } from "react-native";
 import { Card, Icon } from "@rneui/themed";
 import { baseUrl } from "../comun/comun";
 import { connect } from "react-redux";
-import { postFavorito } from "../redux/ActionCreators";
+import { postComentario, postFavorito } from "../redux/ActionCreators";
+import { Modal } from "react-native";
+import { Button } from "react-native";
+import { StyleSheet } from "react-native";
+import { Rating } from "react-native-ratings";
+import { Input } from "@rneui/themed";
+import { colorGaztaroaOscuro } from "../comun/comun";
 
 const mapStateToProps = (state) => {
   return {
@@ -15,6 +21,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
   postFavorito: (excursionId) => dispatch(postFavorito(excursionId)),
+  postComentario: (comentario) => dispatch(postComentario(comentario)),
 });
 
 function RenderExcursion(props) {
@@ -38,6 +45,14 @@ function RenderExcursion(props) {
               ? console.log("La excursión ya se encuentra entre las favoritas")
               : props.onPress()
           }
+        />
+        <Icon
+          raised
+          reverse
+          name="pencil"
+          type="font-awesome"
+          color={colorGaztaroaOscuro}
+          onPress={() => props.onPressAddComentary()}
         />
       </Card>
     );
@@ -75,8 +90,31 @@ class DetalleExcursion extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      favoritos: [],
+      valoracion: 3,
+      autor: "",
+      comentario: "",
+      showModal: false,
     };
+  }
+
+  resetForm() {
+    this.setState({
+      valoracion: 3,
+      autor: "",
+      comentario: "",
+      dia: "",
+      showModal: false,
+    });
+  }
+
+  gestionarComentario(excursionId) {
+    this.props.postComentario(
+      excursionId,
+      this.state.valoracion,
+      this.state.autor,
+      this.state.comentario
+    );
+    this.resetForm();
   }
 
   marcarFavorito(excursionId) {
@@ -93,6 +131,7 @@ class DetalleExcursion extends Component {
             (el) => el === excursionId
           )}
           onPress={() => this.marcarFavorito(excursionId)}
+          onPressAddComentary={() => this.toggleModal()}
         />
 
         <RenderComentario
@@ -100,9 +139,84 @@ class DetalleExcursion extends Component {
             (comentario) => comentario.excursionId === excursionId
           )}
         />
+        <Modal
+          animationType={"slide"}
+          transparent={false}
+          visible={this.state.showModal}
+          onDismiss={() => {
+            this.toggleModal();
+            this.resetForm();
+          }}
+          onRequestClose={() => {
+            this.toggleModal();
+            this.resetForm();
+          }}
+        >
+          <View style={styles.modal}>
+            <Rating
+              showRating
+              onFinishRating={(value) => this.setState({ puntuacion: value })}
+              style={{ paddingVertical: 40 }}
+              defaultRating={3}
+            />
+            <Input
+              placeholder=" Autor"
+              onChangeText={(value) => this.setState({ autor: value })}
+              leftIcon={
+                <Icon
+                  name="user-o"
+                  type="font-awesome"
+                  size={24}
+                  color="black"
+                />
+              }
+            />
+            <Input
+              placeholder=" Comentario"
+              onChangeText={(value) => this.setState({ comentario: value })}
+              leftIcon={
+                <Icon
+                  name="comment-o"
+                  type="font-awesome"
+                  size={24}
+                  color="black"
+                />
+              }
+            />
+            <Button
+              style={styles.formRow}
+              onPress={() => {
+                this.gestionarComentario(excursionId);
+              }}
+              title="ENVIAR"
+              color={colorGaztaroaOscuro}
+              accessibilityLabel=""
+            />
+            <Button
+              style={styles.formRow}
+              onPress={() => {
+                this.toggleModal();
+                this.resetForm();
+              }}
+              color={colorGaztaroaOscuro}
+              title="CANCELAR"
+            />
+          </View>
+        </Modal>
       </ScrollView>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  cardTitleStyle: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(DetalleExcursion);
