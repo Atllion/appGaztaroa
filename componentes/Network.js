@@ -5,13 +5,27 @@ import * as Battery from "expo-battery";
 import baja from "./bateria/baja.png";
 import media from "./bateria/media.png";
 import alta from "./bateria/alta.png";
-
+import { Button } from "react-native-elements";
+import { MailComposer } from "expo";
+import { CheckBox } from "expo-checkbox";
 export default function RedInfo() {
   const [connectionType, setConnectionType] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [details, setDetails] = useState(null);
   const [batteryLevel, setBatteryLevel] = useState(null);
   const [batteryImage, setBatteryImage] = useState(null);
+  const [isChecked, setIsChecked] = useState(false);
+
+  const sendEmail = () => {
+    // Configurar el objeto de correo
+    const emailConfig = {
+      recipients: ["destinatario@example.com"],
+      subject: "Asunto del correo",
+      body: "Cuerpo del correo",
+      isHtml: false,
+    };
+    MailComposer.composeAsync(emailConfig);
+  };
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
@@ -57,10 +71,16 @@ export default function RedInfo() {
     }
   };
 
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked);
+  };
+
   return (
     <View style={styles.container}>
       {details && (
         <View style={styles.detailsContainer}>
+          <CheckBox value={isChecked} onValueChange={handleCheckboxChange} />
+          <Button title="Enviar correo" onPress={sendEmail} />
           <Text style={styles.detailsTextTitle}>Detalles de la conexión</Text>
           <Text style={styles.detailsText}>
             Tipo de conexión: {connectionType ? connectionType : "Desconocido"}
