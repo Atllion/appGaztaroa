@@ -1,7 +1,10 @@
-import React from "react";
-import MapView, { Marker } from "react-native-maps";
-import { StyleSheet, View } from "react-native";
+import React, { useRef, useState } from "react";
+import MapView, { Callout, Marker } from "react-native-maps";
+import { Button, StyleSheet, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { Text, ScrollView } from "react-native";
+import * as FileSystem from "expo-file-system";
+import { shareAsync } from "expo-sharing";
 
 let locationsOfInteres = [
   {
@@ -38,8 +41,12 @@ let locationsOfInteres = [
   },
 ];
 export default function Map() {
+  const [moveMarker, setMoveMarker] = useState({
+    latitude: 42.76600122671833,
+    longitude: -1.6698580048978329,
+  });
   const regionChange = (region) => {
-    console.log(region);
+    // console.log(region);
   };
   const mapaDeInteres = () => {
     return locationsOfInteres.map((item, index) => {
@@ -53,9 +60,20 @@ export default function Map() {
       );
     });
   };
+  const mapReference = useRef();
+  const takeCapture = async () => {
+    const capture = await mapReference.current.takeSnapshot({
+      width: 300,
+      heigh,
+      result: "base64",
+    });
+    console.log(capture);
+    console.log("HOLLLLLLAAAAA");
+  };
   return (
     <View style={styles.container}>
       <MapView
+        ref={mapReference}
         style={styles.map}
         onRegionChange={regionChange}
         initialRegion={{
@@ -66,6 +84,17 @@ export default function Map() {
         }}
       >
         {mapaDeInteres()}
+        <Marker
+          draggable
+          pinColor="#009DDF"
+          coordinate={moveMarker}
+          onDragEnd={(e) => setMoveMarker(e.nativeEvent.coordinate)}
+        >
+          <Callout>
+            <Text>Localización del puntero</Text>
+            <Button title="Capturar ubicación" onPress={takeCapture} />
+          </Callout>
+        </Marker>
       </MapView>
       <StatusBar style="auto" />
     </View>

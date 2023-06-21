@@ -4657,6 +4657,18 @@ expo-modules-core@1.2.6:
     compare-versions "^3.4.0"
     invariant "^2.2.4"
 
+expo-screen-capture@~5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/expo-screen-capture/-/expo-screen-capture-5.1.1.tgz#4a1d540f85721403fc58017142dfbebe3a05ff45"
+  integrity sha512-nR31IU+wEeNz2rDXE0/1y5oWnauXXE408ffwpogILDY7sRo2cUVJyy3ESL2ufb1evL4c0W03ffvr+FHNVKhjoQ==
+
+expo-sensors@~12.1.1:
+  version "12.1.1"
+  resolved "https://registry.yarnpkg.com/expo-sensors/-/expo-sensors-12.1.1.tgz#68dd7a1426c7c40d6e0435e9528064aa3102174b"
+  integrity sha512-b5vaz1vAXO9kPXZ06a0hxoSkL4VXtJyEb6Qatpu7jLgThhzKcHOWjOHFvr/hqB4nat6uaRLXii+F1CwcoBMnpQ==
+  dependencies:
+    invariant "^2.2.4"
+
 expo-sharing@~11.2.2:
   version "11.2.2"
   resolved "https://registry.yarnpkg.com/expo-sharing/-/expo-sharing-11.2.2.tgz#7d9e387f1a902e6dd6838c22d9599dae9e7432cf"

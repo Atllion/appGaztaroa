@@ -26,6 +26,7 @@ import {
 } from "../redux/ActionCreators";
 import Login from "./Login";
 import Map from "./Map";
+import Barometro from "./Barometer";
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -94,6 +95,13 @@ function CalendarioNavegador({ navigation }) {
       <Stack.Screen
         name="Login"
         component={Login}
+        options={{
+          title: "Calendario Gaztaroa",
+        }}
+      />
+      <Stack.Screen
+        name="Barometro"
+        component={Barometro}
         options={{
           title: "Calendario Gaztaroa",
         }}
@@ -217,6 +225,20 @@ function DrawerNavegador() {
         }}
       />
       <Drawer.Screen
+        name="Brújula"
+        component={BarometerNavegador}
+        options={{
+          drawerIcon: ({ tintColor }) => (
+            <Icon
+              name="compass"
+              type="font-awesome"
+              size={24}
+              color={tintColor}
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
         name="Contacto"
         component={ContactNavegador}
         options={{
@@ -292,6 +314,38 @@ function LoginNavegador({ navigation }) {
         component={Login}
         options={{
           title: "Login",
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function BarometerNavegador({ navigation }) {
+  return (
+    <Stack.Navigator
+      initialRouteName="Brújula"
+      screenOptions={{
+        title: "Aligned Center",
+        headerTitleAlign: "center",
+        headerMode: "screen",
+        headerTintColor: "#fff",
+        headerStyle: { backgroundColor: colorGaztaroaOscuro },
+        headerTitleStyle: { color: "#fff" },
+        headerLeft: () => (
+          <Icon
+            name="menu"
+            size={28}
+            color="white"
+            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+          />
+        ),
+      }}
+    >
+      <Stack.Screen
+        name="Brujula"
+        component={Barometro}
+        options={{
+          title: "Brújula",
         }}
       />
     </Stack.Navigator>
