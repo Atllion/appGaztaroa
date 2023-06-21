@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
+import * as Battery from "expo-battery";
+import baja from "./bateria/baja.png";
+import media from "./bateria/media.png";
+import alta from "./bateria/alta.png";
 
 export default function RedInfo() {
   const [connectionType, setConnectionType] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [details, setDetails] = useState(null);
+  const [batteryLevel, setBatteryLevel] = useState(null);
+  const [batteryImage, setBatteryImage] = useState(null);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
@@ -18,6 +24,38 @@ export default function RedInfo() {
       unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    const getBatteryLevel = async () => {
+      const batteryInfo = await Battery.getBatteryLevelAsync();
+      setBatteryLevel(batteryInfo);
+    };
+
+    getBatteryLevel();
+  }, []);
+
+  useEffect(() => {
+    const updateBatteryImage = () => {
+      const image = getBatteryImage();
+      setBatteryImage(image);
+    };
+
+    updateBatteryImage();
+  }, [batteryLevel]);
+
+  const getBatteryImage = () => {
+    if (batteryLevel !== null) {
+      if (batteryLevel < 0.3) {
+        return baja;
+      } else if (batteryLevel < 0.7) {
+        return media;
+      } else {
+        return alta;
+      }
+    } else {
+      return null;
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -33,6 +71,14 @@ export default function RedInfo() {
           </Text>
           <Text style={styles.detailsText}>
             Máscara de subred: {details.subnet}
+          </Text>
+        </View>
+      )}
+      {batteryImage && (
+        <View style={styles.batteryContainer}>
+          <Image source={batteryImage} style={styles.batteryImage} />
+          <Text style={styles.batteryText}>
+            {batteryLevel !== null ? (batteryLevel * 100).toFixed(2) : ""}%
           </Text>
         </View>
       )}
@@ -53,7 +99,7 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     borderRadius: 40,
-    borderColor: "#black",
+    borderColor: "#000000",
     marginTop: 20,
     paddingHorizontal: 10,
     backgroundColor: "#d0eadd",
@@ -67,5 +113,20 @@ const styles = StyleSheet.create({
     fontSize: 25,
     marginBottom: 5,
     width: 300,
+  },
+  batteryContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 20,
+  },
+  batteryImage: {
+    width: 100,
+    height: 100,
+    resizeMode: "contain",
+  },
+  batteryText: {
+    fontSize: 20,
+    marginTop: 10,
+    marginBottom: 100,
   },
 });
