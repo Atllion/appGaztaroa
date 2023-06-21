@@ -1,10 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
+import { TouchableOpacity, StyleSheet, View } from "react-native";
 import MapView, { Callout, Marker } from "react-native-maps";
-import { Button, StyleSheet, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { Text, ScrollView } from "react-native";
+import { Text } from "react-native";
 import * as FileSystem from "expo-file-system";
-import { shareAsync } from "expo-sharing";
+import { captureRef } from "react-native-view-shot";
+import { useState } from "react";
+import { Button } from "react-native";
+import * as Sharing from "expo-sharing";
 
 let locationsOfInteres = [
   {
@@ -61,15 +64,17 @@ export default function Map() {
     });
   };
   const mapReference = useRef();
+  console.log("El componente se está renderizando correctamente");
   const takeCapture = async () => {
-    const capture = await mapReference.current.takeSnapshot({
-      width: 300,
-      heigh,
-      result: "base64",
+    console.log("Se ha presionado el botón de captura");
+    const capture = await captureRef(mapReference, {
+      format: "png",
+      quality: 1,
     });
-    console.log(capture);
-    console.log("HOLLLLLLAAAAA");
+
+    console.log("Captura realizada:", capture);
   };
+
   return (
     <View style={styles.container}>
       <MapView
@@ -110,5 +115,15 @@ const styles = StyleSheet.create({
   map: {
     width: "100%",
     height: "100%",
+  },
+  button: {
+    padding: 10,
+    margin: 10,
+    backgroundColor: "blue",
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "white",
+    textAlign: "center",
   },
 });

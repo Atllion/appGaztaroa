@@ -27,6 +27,7 @@ import {
 import Login from "./Login";
 import Map from "./Map";
 import Barometro from "./Barometer";
+import RedInfo from "./Network";
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -102,6 +103,13 @@ function CalendarioNavegador({ navigation }) {
       <Stack.Screen
         name="Barometro"
         component={Barometro}
+        options={{
+          title: "Calendario Gaztaroa",
+        }}
+      />
+      <Stack.Screen
+        name="Network"
+        component={RedInfo}
         options={{
           title: "Calendario Gaztaroa",
         }}
@@ -216,6 +224,15 @@ function DrawerNavegador() {
         }}
       />
       <Drawer.Screen
+        name="Network"
+        component={NetworkNavegador}
+        options={{
+          drawerIcon: ({ tintColor }) => (
+            <Icon name="wifi" type="font-awesome" size={24} color={tintColor} />
+          ),
+        }}
+      />
+      <Drawer.Screen
         name="Maps"
         component={MapNavegador}
         options={{
@@ -314,6 +331,38 @@ function LoginNavegador({ navigation }) {
         component={Login}
         options={{
           title: "Login",
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function NetworkNavegador({ navigation }) {
+  return (
+    <Stack.Navigator
+      initialRouteName="Networ"
+      screenOptions={{
+        title: "Aligned Center",
+        headerTitleAlign: "center",
+        headerMode: "screen",
+        headerTintColor: "#fff",
+        headerStyle: { backgroundColor: colorGaztaroaOscuro },
+        headerTitleStyle: { color: "#fff" },
+        headerLeft: () => (
+          <Icon
+            name="menu"
+            size={28}
+            color="white"
+            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+          />
+        ),
+      }}
+    >
+      <Stack.Screen
+        name="Network"
+        component={RedInfo}
+        options={{
+          title: "Network",
         }}
       />
     </Stack.Navigator>
