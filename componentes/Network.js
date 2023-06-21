@@ -23,7 +23,7 @@ export default function RedInfo() {
     <View style={styles.container}>
       {details && (
         <View style={styles.detailsContainer}>
-          <Text style={styles.detailsTextTitle}>Detalles de la red:</Text>
+          <Text style={styles.detailsTextTitle}>Detalles de la conexión</Text>
           <Text style={styles.detailsText}>
             Tipo de conexión: {connectionType ? connectionType : "Desconocido"}
           </Text>
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   detailsTextTitle: {
-    fontSize: 20,
+    fontSize: 25,
     marginBottom: 5,
     width: 300,
   },
