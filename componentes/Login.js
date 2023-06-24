@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, TextInput, Button, StyleSheet, Image, Text } from "react-native";
 import axios from "axios";
-import { createStackNavigator } from "@react-navigation/stack";
 import CampobaseComponent from "./CampobaseComponent";
+import { createStackNavigator, Screen } from "@react-navigation/stack";
 
 const Stack = createStackNavigator();
 
@@ -20,12 +20,13 @@ export const firebaseConfig = {
 
 export default function Login(props) {
   const { isLogged, updateLogin } = props;
+  const [nombreUsuario, setNombreUsuario] = useState("");
   const [email, setEmail] = useState("");
   const [inicioSesion, setInicioSesion] = useState(false);
   const [password, setPassword] = useState("");
   console.log(props.updateLogin);
   console.log("props.updateLogin");
-  console.log("*-----------");
+  console.log("------------");
   const uri =
     "https://img.freepik.com/vector-gratis/vector-fondo-acuarela-floral-primavera-verde-ilustracion-hoja_53876-126350.jpg?w=996&t=st=1687263023~exp=1687263623~hmac=427bd272ae2bc7b9a63e97d62b53c3f71eaebd1e4911aeb598574cbc13e97377";
 
@@ -36,7 +37,13 @@ export default function Login(props) {
       password: password,
       returnSecureToken: true,
     };
-
+    useEffect(() => {
+      if (inicioSesion) {
+        console.log("La sesión está iniciada");
+      } else {
+        console.log("La sesión no está iniciada");
+      }
+    }, [inicioSesion]);
     console.log("Datos de creación de cuenta:", data);
 
     axios
@@ -66,64 +73,50 @@ export default function Login(props) {
       .then((response) => {
         console.log("Inicio de sesión exitoso");
         const user = response.data;
+        console.log("--------------------------");
         console.log(user);
-
+        console.log("--------------------------");
         // Actualizar la propiedad isLogged a true
         updateLogin(true);
-        console.log(
-          "**********************************************updateLogin"
-        );
-        console.log({ updateLogin });
-        setInicioSesion(true);
       })
       .catch((error) => {
+        console.log("//////////////////////////");
         console.log(error);
         console.log("error");
+        console.log("//////////////////////////");
       });
   };
 
   return (
     <>
-      {inicioSesion ? (
-        <CampobaseComponent />
-      ) : (
-        <View style={styles.container}>
-          <Image
-            source={{ uri }}
-            style={[styles.image, StyleSheet.absoluteFill]}
-          />
-          <Text style={styles.nombre_login}>Login </Text>
-          <Text style={styles.nombre_input}>
-            Introduce el correo electrónico{" "}
-          </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Correo electrónico"
-            onChangeText={(text) => setEmail(text)}
-            value={email}
-          />
-
-          <Text style={styles.nombre_input}>Introduce la contraseña </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Contraseña"
-            onChangeText={(text) => setPassword(text)}
-            value={password}
-            secureTextEntry
-          />
-          <Button
-            onPress={handleCreateAccount}
-            style={styles.button}
-            title="Crear cuenta"
-          />
-          <Text style={styles.nombre_input}> </Text>
-          <Button
-            onPress={handleSignIn}
-            style={styles.button}
-            title="Iniciar sesión"
-          />
-        </View>
-      )}
+      <View style={styles.container}>
+        <Image
+          source={{ uri }}
+          style={[styles.image, StyleSheet.absoluteFill]}
+        />
+        <Text style={styles.nombre_login}>
+          {inicioSesion ? "Se ha iniciado correctamente" : "Inicio de sesión"}
+        </Text>
+        <Text style={styles.nombre_input}>
+          {inicioSesion
+            ? "Introduce tu correo electrónico sesion iniciada"
+            : "Introduce tu correo electrónico"}
+        </Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Correo electrónico"
+          onChangeText={(text) => setEmail(text)}
+        />
+        <Text style={styles.nombre_input}>Introduce tu contraseña</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Contraseña"
+          secureTextEntry={true}
+          onChangeText={(text) => setPassword(text)}
+        />
+        <Button title="Crear cuenta" onPress={handleCreateAccount} />
+        <Button title="Iniciar sesión" onPress={handleSignIn} />
+      </View>
     </>
   );
 }

@@ -96,11 +96,19 @@ function CalendarioNavegador({ navigation }) {
     >
       <Stack.Screen
         name="Login"
-        component={Login}
         options={{
-          title: "Calendario Gaztaroa",
+          title: "Login",
         }}
-      />
+      >
+        {(props) => (
+          <Login
+            login={login}
+            loginData={loginData}
+            updateLogin={updateLogin}
+            {...props}
+          />
+        )}
+      </Stack.Screen>
       <Stack.Screen
         name="Barometro"
         component={Barometro}
@@ -336,17 +344,19 @@ function LoginNavegador({ navigation }) {
     >
       <Stack.Screen
         name="Login"
-        component={() => (
+        options={{
+          title: "Inicio sesión",
+        }}
+      >
+        {(props) => (
           <Login
             login={login}
             loginData={loginData}
             updateLogin={updateLogin}
+            {...props}
           />
         )}
-        options={{
-          title: "Login",
-        }}
-      />
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }
