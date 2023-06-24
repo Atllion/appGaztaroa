@@ -20,7 +20,7 @@ export const firebaseConfig = {
 
 export default function Login(props) {
   const { isLogged, updateLogin } = props;
-  const [nombreUsuario, setNombreUsuario] = useState("");
+  const [nameUser, setnameUser] = useState("");
   const [email, setEmail] = useState("");
   const [inicioSesion, setInicioSesion] = useState(false);
   const [password, setPassword] = useState("");
@@ -78,6 +78,8 @@ export default function Login(props) {
         console.log("--------------------------");
         // Actualizar la propiedad isLogged a true
         updateLogin(true);
+        setnameUser(user.email);
+        setInicioSesion(true);
       })
       .catch((error) => {
         console.log("//////////////////////////");
@@ -89,34 +91,46 @@ export default function Login(props) {
 
   return (
     <>
-      <View style={styles.container}>
-        <Image
-          source={{ uri }}
-          style={[styles.image, StyleSheet.absoluteFill]}
-        />
-        <Text style={styles.nombre_login}>
-          {inicioSesion ? "Se ha iniciado correctamente" : "Inicio de sesión"}
-        </Text>
-        <Text style={styles.nombre_input}>
-          {inicioSesion
-            ? "Introduce tu correo electrónico sesion iniciada"
-            : "Introduce tu correo electrónico"}
-        </Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Correo electrónico"
-          onChangeText={(text) => setEmail(text)}
-        />
-        <Text style={styles.nombre_input}>Introduce tu contraseña</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Contraseña"
-          secureTextEntry={true}
-          onChangeText={(text) => setPassword(text)}
-        />
-        <Button title="Crear cuenta" onPress={handleCreateAccount} />
-        <Button title="Iniciar sesión" onPress={handleSignIn} />
-      </View>
+      {inicioSesion ? (
+        <Text style={styles.nombre_login}>Bienvenid@ {nameUser}</Text>
+      ) : (
+        <View style={styles.container}>
+          <Image
+            source={{ uri }}
+            style={[styles.image, StyleSheet.absoluteFill]}
+          />
+          <Text style={styles.nombre_login}>Login </Text>
+          <Text style={styles.nombre_input}>
+            Introduce el correo electrónico{" "}
+          </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Correo electrónico"
+            onChangeText={(text) => setEmail(text)}
+            value={email}
+          />
+
+          <Text style={styles.nombre_input}>Introduce la contraseña </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Contraseña"
+            onChangeText={(text) => setPassword(text)}
+            value={password}
+            secureTextEntry
+          />
+          <Button
+            onPress={handleCreateAccount}
+            style={styles.button}
+            title="Crear cuenta"
+          />
+          <Text style={styles.nombre_input}> </Text>
+          <Button
+            onPress={handleSignIn}
+            style={styles.button}
+            title="Iniciar sesión"
+          />
+        </View>
+      )}
     </>
   );
 }
