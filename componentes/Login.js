@@ -1,133 +1,166 @@
-// import React, { useState } from "react";
-// import { View, TextInput, Button, StyleSheet } from "react-native";
-// import { Card } from "@rneui/themed";
-// import { Text, ScrollView } from "react-native";
-// import { useEffect } from "react";
-// import { Image } from "react-native";
-// import {
-//   getAuth,
-//   createUserWithEmailAndPassword,
-//   signInWithEmailAndPassword,
-// } from "@react-native-firebase/auth";
-// import { initializeApp } from "@react-native-firebase/app";
-// import { firebaseConfig } from "../comun/configuracion";
+import React, { useState } from "react";
+import { View, TextInput, Button, StyleSheet, Image, Text } from "react-native";
+import axios from "axios";
+import { createStackNavigator } from "@react-navigation/stack";
+import CampobaseComponent from "./CampobaseComponent";
 
-// function Logueado() {
-//   return (
-//     <View style={styles.container}>
-//       <Text>Logueado</Text>
-//     </View>
-//   );
-// }
+const Stack = createStackNavigator();
 
-// const appp = initializeApp(firebaseConfig);
-// const auth = getAuth(appp);
+export const firebaseConfig = {
+  apiKey: "AIzaSyCV_7td7QFI3Ex-zbiXJRYtFBYJlb0mv4g",
+  authDomain: "appgaztaroa-a3165.firebaseapp.com",
+  databaseURL:
+    "https://appgaztaroa-a3165-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "appgaztaroa-a3165",
+  storageBucket: "appgaztaroa-a3165.appspot.com",
+  messagingSenderId: "349629502365",
+  appId: "1:349629502365:web:c4c074686a960f233f1574",
+  measurementId: "G-3E6EB8SQBW",
+};
 
-// const handleCreateAccount = () => {
-//   createUserWithEmailAndPassword(auth, email, password)
-//     .then(() => {
-//       console.log("Cuenta creada");
-//       const user = userCredential.user;
-//       console.log(user);
-//     })
-//     .cath((error) => {
-//       console.log(error);
-//     });
-// };
+export default function Login(props) {
+  const { isLogged, updateLogin } = props;
+  const [email, setEmail] = useState("");
+  const [inicioSesion, setInicioSesion] = useState(false);
+  const [password, setPassword] = useState("");
+  console.log(props.updateLogin);
+  console.log("props.updateLogin");
+  console.log("*-----------");
+  const uri =
+    "https://img.freepik.com/vector-gratis/vector-fondo-acuarela-floral-primavera-verde-ilustracion-hoja_53876-126350.jpg?w=996&t=st=1687263023~exp=1687263623~hmac=427bd272ae2bc7b9a63e97d62b53c3f71eaebd1e4911aeb598574cbc13e97377";
 
-// const handleSingIn = () => {
-//   signInWithEmailAndPassword(auth, email, password)
-//     .then(() => {
-//       console.log("Inicio de sesión");
-//       const user = userCredential.user;
-//       console.log(user);
-//     })
-//     .cath((error) => {
-//       console.log(error);
-//     });
-// };
+  const handleCreateAccount = () => {
+    const url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${firebaseConfig.apiKey}`;
+    const data = {
+      email: email,
+      password: password,
+      returnSecureToken: true,
+    };
 
-// function LoginScreen() {
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-//   const uri =
-//     "https://img.freepik.com/vector-gratis/vector-fondo-acuarela-floral-primavera-verde-ilustracion-hoja_53876-126350.jpg?w=996&t=st=1687263023~exp=1687263623~hmac=427bd272ae2bc7b9a63e97d62b53c3f71eaebd1e4911aeb598574cbc13e97377";
+    console.log("Datos de creación de cuenta:", data);
 
-//   return (
-//     <>
-//       <View style={styles.container}>
-//         <Image
-//           source={{ uri }}
-//           style={[styles.image, StyleSheet.absoluteFill]}
-//         />
-//         <Text style={styles.nombre_login}>Login </Text>
-//         <Text style={styles.nombre_input}>
-//           Introduce el correo electrónico{" "}
-//         </Text>
-//         <TextInput
-//           style={styles.input}
-//           placeholder="Correo electrónico"
-//           onChangeText={(text) => setEmail(text)}
-//           value={email}
-//         />
+    axios
+      .post(url, data)
+      .then((response) => {
+        console.log("Cuenta creada");
+        const user = response.data;
+        console.log(user);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-//         <Text style={styles.nombre_input}>Introduce la contraseña </Text>
-//         <TextInput
-//           style={styles.input}
-//           placeholder="Contraseña"
-//           onChangeText={(text) => setPassword(text)}
-//           value={password}
-//           secureTextEntry
-//         />
-//         <Button
-//           onPress={handleCreateAccount}
-//           style="marginBottom: 10px"
-//           title="Iniciar sesión"
-//         />
-//         <Text style={styles.nombre_input}> </Text>
-//         <Button style={styles.boton} title="Crear  Cuenta" />
-//       </View>
-//     </>
-//   );
-// }
+  const handleSignIn = () => {
+    const url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseConfig.apiKey}`;
+    const data = {
+      email: email,
+      password: password,
+      returnSecureToken: true,
+    };
 
-// export default function Login() {
-//   return <LoginScreen />;
-// }
+    console.log("Datos de inicio de sesión:", data);
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: "center",
-//     alignItems: "center",
-//     padding: 20,
-//     marginBottom: 20,
-//   },
-//   input: {
-//     fontSize: 25,
-//     width: "100%",
-//     height: 40,
-//     borderWidth: 1,
-//     borderColor: "#ccc",
-//     marginBottom: 12,
-//     paddingHorizontal: 10,
-//     alignItems: "center",
-//     marginBottom: 40,
-//   },
-//   nombre_input: {
-//     fontSize: 25,
-//     alignItems: "center",
-//     marginBottom: 20,
-//   },
-//   nombre_login: {
-//     fontSize: 50,
-//     fontWeight: 700,
-//     alignItems: "center",
-//     marginBottom: 20,
-//   },
-//   boton: {
-//     marginBottom: 20,
-//     marginTop: 20,
-//     color: "red",
-//   },
-// });
+    axios
+      .post(url, data)
+      .then((response) => {
+        console.log("Inicio de sesión exitoso");
+        const user = response.data;
+        console.log(user);
+
+        // Actualizar la propiedad isLogged a true
+        updateLogin(true);
+        console.log(
+          "**********************************************updateLogin"
+        );
+        console.log({ updateLogin });
+        setInicioSesion(true);
+      })
+      .catch((error) => {
+        console.log(error);
+        console.log("error");
+      });
+  };
+
+  return (
+    <>
+      {inicioSesion ? (
+        <CampobaseComponent />
+      ) : (
+        <View style={styles.container}>
+          <Image
+            source={{ uri }}
+            style={[styles.image, StyleSheet.absoluteFill]}
+          />
+          <Text style={styles.nombre_login}>Login </Text>
+          <Text style={styles.nombre_input}>
+            Introduce el correo electrónico{" "}
+          </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Correo electrónico"
+            onChangeText={(text) => setEmail(text)}
+            value={email}
+          />
+
+          <Text style={styles.nombre_input}>Introduce la contraseña </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Contraseña"
+            onChangeText={(text) => setPassword(text)}
+            value={password}
+            secureTextEntry
+          />
+          <Button
+            onPress={handleCreateAccount}
+            style={styles.button}
+            title="Crear cuenta"
+          />
+          <Text style={styles.nombre_input}> </Text>
+          <Button
+            onPress={handleSignIn}
+            style={styles.button}
+            title="Iniciar sesión"
+          />
+        </View>
+      )}
+    </>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+    marginBottom: 20,
+  },
+  input: {
+    fontSize: 25,
+    width: "100%",
+    height: 40,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    marginBottom: 12,
+    paddingHorizontal: 10,
+    alignItems: "center",
+    marginBottom: 40,
+  },
+  nombre_input: {
+    fontSize: 25,
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  nombre_login: {
+    fontSize: 50,
+    fontWeight: "700",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  button: {
+    marginBottom: 20,
+    marginTop: 20,
+    color: "red",
+  },
+});

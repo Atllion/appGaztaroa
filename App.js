@@ -4,6 +4,7 @@ import { StyleSheet, View } from "react-native";
 import Campobase from "./componentes/CampobaseComponent";
 import { Provider } from "react-redux";
 import { ConfigureStore } from "./redux/configureStore";
+import { useState } from "react";
 
 const store = ConfigureStore();
 

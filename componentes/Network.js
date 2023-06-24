@@ -7,7 +7,8 @@ import media from "./bateria/media.png";
 import alta from "./bateria/alta.png";
 import { Button } from "react-native-elements";
 import { MailComposer } from "expo";
-import { CheckBox } from "expo-checkbox";
+import { CheckBox } from "react-native-elements";
+
 export default function RedInfo() {
   const [connectionType, setConnectionType] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -77,10 +78,16 @@ export default function RedInfo() {
 
   return (
     <View style={styles.container}>
+      <CheckBox value={isChecked} onValueChange={handleCheckboxChange} />
       {details && (
         <View style={styles.detailsContainer}>
-          <CheckBox value={isChecked} onValueChange={handleCheckboxChange} />
-          <Button title="Enviar correo" onPress={sendEmail} />
+          <Button
+            title="Enviar correo"
+            onPress={sendEmail}
+            color="#841584"
+            accessibilityLabel="Learn more about this purple button"
+          />
+
           <Text style={styles.detailsTextTitle}>Detalles de la conexión</Text>
           <Text style={styles.detailsText}>
             Tipo de conexión: {connectionType ? connectionType : "Desconocido"}

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { useState } from "react";
 import Calendario from "./CalendarioComponent";
 import DetalleExcursion from "./DetalleExcursionComponent";
 import Home from "./HomeComponent";
@@ -224,15 +225,6 @@ function DrawerNavegador() {
         }}
       />
       <Drawer.Screen
-        name="Network"
-        component={NetworkNavegador}
-        options={{
-          drawerIcon: ({ tintColor }) => (
-            <Icon name="wifi" type="font-awesome" size={24} color={tintColor} />
-          ),
-        }}
-      />
-      <Drawer.Screen
         name="Maps"
         component={MapNavegador}
         options={{
@@ -252,6 +244,15 @@ function DrawerNavegador() {
               size={24}
               color={tintColor}
             />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Network"
+        component={NetworkNavegador}
+        options={{
+          drawerIcon: ({ tintColor }) => (
+            <Icon name="wifi" type="font-awesome" size={24} color={tintColor} />
           ),
         }}
       />
@@ -306,6 +307,13 @@ function ContactNavegador({ navigation }) {
 }
 
 function LoginNavegador({ navigation }) {
+  const [login, setLogin] = useState(false);
+  const [loginData, setLoginData] = useState([]);
+  const updateLogin = (login, loginData) => {
+    setLogin(login);
+    setLoginData(loginData);
+  };
+
   return (
     <Stack.Navigator
       initialRouteName="Login"
@@ -328,9 +336,47 @@ function LoginNavegador({ navigation }) {
     >
       <Stack.Screen
         name="Login"
-        component={Login}
+        component={() => (
+          <Login
+            login={login}
+            loginData={loginData}
+            updateLogin={updateLogin}
+          />
+        )}
         options={{
           title: "Login",
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function MapNavegador({ navigation }) {
+  return (
+    <Stack.Navigator
+      initialRouteName="Map"
+      screenOptions={{
+        title: "Aligned Center",
+        headerTitleAlign: "center",
+        headerMode: "screen",
+        headerTintColor: "#fff",
+        headerStyle: { backgroundColor: colorGaztaroaOscuro },
+        headerTitleStyle: { color: "#fff" },
+        headerLeft: () => (
+          <Icon
+            name="menu"
+            size={28}
+            color="white"
+            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+          />
+        ),
+      }}
+    >
+      <Stack.Screen
+        name="Map"
+        component={Map}
+        options={{
+          title: "Map",
         }}
       />
     </Stack.Navigator>
@@ -344,6 +390,7 @@ function NetworkNavegador({ navigation }) {
       screenOptions={{
         title: "Aligned Center",
         headerTitleAlign: "center",
+
         headerMode: "screen",
         headerTintColor: "#fff",
         headerStyle: { backgroundColor: colorGaztaroaOscuro },
@@ -401,38 +448,6 @@ function BarometerNavegador({ navigation }) {
   );
 }
 
-function MapNavegador({ navigation }) {
-  return (
-    <Stack.Navigator
-      initialRouteName="Map"
-      screenOptions={{
-        title: "Aligned Center",
-        headerTitleAlign: "center",
-        headerMode: "screen",
-        headerTintColor: "#fff",
-        headerStyle: { backgroundColor: colorGaztaroaOscuro },
-        headerTitleStyle: { color: "#fff" },
-        headerLeft: () => (
-          <Icon
-            name="menu"
-            size={28}
-            color="white"
-            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-          />
-        ),
-      }}
-    >
-      <Stack.Screen
-        name="Map"
-        component={Map}
-        options={{
-          title: "Map",
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
-
 function QuienesSomosNavegador({ navigation }) {
   return (
     <Stack.Navigator
@@ -472,6 +487,7 @@ class Campobase extends Component {
     this.props.fetchCabeceras();
     this.props.fetchActividades();
   }
+
   render() {
     return (
       <NavigationContainer>
