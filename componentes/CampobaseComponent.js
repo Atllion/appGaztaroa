@@ -50,6 +50,8 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 function CustomDrawerContent(props) {
+  const uri =
+    "https://firebasestorage.googleapis.com/v0/b/appgaztaroa-a3165.appspot.com/o/logo.png?alt=media&token=2b49fa10-5815-4dd1-9314-59fac52686ae";
   return (
     <DrawerContentScrollView {...props}>
       <SafeAreaView
@@ -58,10 +60,7 @@ function CustomDrawerContent(props) {
       >
         <View style={styles.drawerHeader}>
           <View style={{ flex: 1 }}>
-            <Image
-              source={require("./imagenes/logo.png")}
-              style={styles.drawerImage}
-            />
+            <Image source={{ uri }} style={styles.drawerImage} />
           </View>
           <View style={{ flex: 2 }}>
             <Text style={styles.drawerHeaderText}> Gaztaroa</Text>
@@ -74,6 +73,7 @@ function CustomDrawerContent(props) {
 }
 
 function CalendarioNavegador({ navigation }) {
+  const usuario = "Edison";
   return (
     <Stack.Navigator
       initialRouteName="Calendario"
@@ -94,7 +94,7 @@ function CalendarioNavegador({ navigation }) {
         ),
       }}
     >
-      <Stack.Screen
+      {/* <Stack.Screen
         name="Login"
         options={{
           title: "Login",
@@ -108,7 +108,7 @@ function CalendarioNavegador({ navigation }) {
             {...props}
           />
         )}
-      </Stack.Screen>
+      </Stack.Screen> */}
       <Stack.Screen
         name="Barometro"
         component={Barometro}
@@ -480,7 +480,7 @@ function QuienesSomosNavegador({ navigation }) {
       }}
     >
       <Stack.Screen
-        name="QuienesSomos"
+        name="Quienes Somos"
         component={QuienesSomos}
         options={{
           title: "QuienesSomos",

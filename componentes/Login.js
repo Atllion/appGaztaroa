@@ -3,7 +3,8 @@ import { View, TextInput, Button, StyleSheet, Image, Text } from "react-native";
 import axios from "axios";
 import CampobaseComponent from "./CampobaseComponent";
 import { createStackNavigator, Screen } from "@react-navigation/stack";
-
+import { Dimensions } from "react-native";
+const screenWidth = Dimensions.get("window").width;
 const Stack = createStackNavigator();
 
 export const firebaseConfig = {
@@ -19,6 +20,10 @@ export const firebaseConfig = {
 };
 
 export default function Login(props) {
+  const [nombre, setNombre] = useState();
+  const [apellido, setApellido] = useState();
+  const [avatar, setAvatar] = useState();
+  const [pais, setPais] = useState();
   const { isLogged, updateLogin } = props;
   const [nameUser, setnameUser] = useState("");
   const [email, setEmail] = useState("");
@@ -73,26 +78,88 @@ export default function Login(props) {
       .then((response) => {
         console.log("Inicio de sesión exitoso");
         const user = response.data;
-        console.log("--------------------------");
-        console.log(user);
-        console.log("--------------------------");
+        // console.log("--------------------------");
+        // console.log(user);
+        // console.log("--------------------------");
         // Actualizar la propiedad isLogged a true
         updateLogin(true);
-        setnameUser(user.email);
+        setEmail(user.email);
         setInicioSesion(true);
       })
       .catch((error) => {
-        console.log("//////////////////////////");
+        // console.log("//////////////////////////");
         console.log(error);
-        console.log("error");
-        console.log("//////////////////////////");
+        // console.log("error");
+        // console.log("//////////////////////////");
       });
   };
+
+  useEffect(() => {
+    if (inicioSesion === true) {
+      console.log(
+        "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+      );
+      axios
+        .get(
+          "https://appgaztaroa-a3165-default-rtdb.europe-west1.firebasedatabase.app/usuarios.json"
+        )
+        .then((response) => {
+          const data = response.data;
+          const dataArray = Object.values(data);
+          const filteredData = dataArray.filter((item) => item !== null);
+
+          const usuarioEncontrado = filteredData.find(
+            (usuario) => usuario.mail === email
+          );
+
+          if (usuarioEncontrado) {
+            setNombre(usuarioEncontrado.nombre);
+            setApellido(usuarioEncontrado.apellido);
+            setAvatar(usuarioEncontrado.avatar);
+            setPais(usuarioEncontrado.pais);
+            console.log(usuarioEncontrado);
+          } else {
+            setnameUser("");
+            setApellido("");
+          }
+          //   console.log(filteredData);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [inicioSesion]);
+
+  //   useEffect(() => {
+  //     console.log(
+  //       "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  //     );
+  //     axios
+  //       .get(
+  //         "https://appgaztaroa-a3165-default-rtdb.europe-west1.firebasedatabase.app/cabeceras.json"
+  //       )
+  //       .then((response) => {
+  //         const data = response.data;
+  //         const filteredData = data.filter((item) => item !== null);
+  //         console.log(filteredData);
+  //       })
+  //       .catch((error) => {
+  //         console.error(error);
+  //       });
+  //   }, []);
 
   return (
     <>
       {inicioSesion ? (
-        <Text style={styles.nombre_login}>Bienvenid@ {nameUser}</Text>
+        <>
+          <View style={styles.imageContainer}>
+            <Text style={styles.nombre_perfil}>Perfil </Text>
+            <Image source={{ uri: avatar }} style={styles.imagen1} />
+            <Text style={styles.input}>Nombre: {nombre}</Text>
+            <Text style={styles.input}>Apellido: {apellido}</Text>
+            <Text style={styles.input}>País: {pais}</Text>
+          </View>
+        </>
       ) : (
         <View style={styles.container}>
           <Image
@@ -165,9 +232,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
+  nombre_perfil: {
+    fontSize: 50,
+    fontWeight: "700",
+    alignItems: "center",
+  },
   button: {
     marginBottom: 20,
     marginTop: 20,
     color: "red",
+  },
+  imageContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  imagen1: {
+    width: screenWidth / 2,
+    aspectRatio: 1, // Para mantener la relación de aspecto original de la imagen
   },
 });
