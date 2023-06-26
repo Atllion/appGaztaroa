@@ -149,26 +149,33 @@ export default function Login(props) {
   //   }, []);
 
   return (
-    <>
+    <View style={styles.container}>
+      <Image
+        source={{
+          uri: "https://img.freepik.com/vector-gratis/vector-fondo-acuarela-floral-primavera-verde-ilustracion-hoja_53876-126350.jpg?w=996&t=st=1687263023~exp=1687263623~hmac=427bd272ae2bc7b9a63e97d62b53c3f71eaebd1e4911aeb598574cbc13e97377",
+        }}
+        style={styles.backgroundImage}
+      />
       {inicioSesion ? (
-        <>
-          <View style={styles.imageContainer}>
-            <Text style={styles.nombre_perfil}>Perfil </Text>
-            <Image source={{ uri: avatar }} style={styles.imagen1} />
-            <Text style={styles.input}>Nombre: {nombre}</Text>
-            <Text style={styles.input}>Apellido: {apellido}</Text>
-            <Text style={styles.input}>País: {pais}</Text>
+        <View style={styles.content}>
+          <Text style={styles.nombre_perfil}>Perfil</Text>
+          <Image source={{ uri: avatar }} style={styles.imagen1} />
+          <View style={styles.fieldContainer}>
+            <Text style={styles.nombre_input}>Nombre:</Text>
+            <TextInput style={styles.input} value={nombre} editable={false} />
+
+            <Text style={styles.nombre_input}>Apellido:</Text>
+            <TextInput style={styles.input} value={apellido} editable={false} />
+
+            <Text style={styles.nombre_input}>País:</Text>
+            <TextInput style={styles.input} value={pais} editable={false} />
           </View>
-        </>
+        </View>
       ) : (
-        <View style={styles.container}>
-          <Image
-            source={{ uri }}
-            style={[styles.image, StyleSheet.absoluteFill]}
-          />
-          <Text style={styles.nombre_login}>Login </Text>
+        <View style={styles.content}>
+          <Text style={styles.nombre_login}>Login</Text>
           <Text style={styles.nombre_input}>
-            Introduce el correo electrónico{" "}
+            Introduce el correo electrónico
           </Text>
           <TextInput
             style={styles.input}
@@ -177,7 +184,7 @@ export default function Login(props) {
             value={email}
           />
 
-          <Text style={styles.nombre_input}>Introduce la contraseña </Text>
+          <Text style={styles.nombre_input}>Introduce la contraseña</Text>
           <TextInput
             style={styles.input}
             placeholder="Contraseña"
@@ -198,7 +205,7 @@ export default function Login(props) {
           />
         </View>
       )}
-    </>
+    </View>
   );
 }
 
@@ -207,10 +214,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    textAlign: "center",
+  },
+  backgroundImage: {
+    ...StyleSheet.absoluteFill,
+    opacity: 0.5,
+  },
+  content: {
+    backgroundColor: "transparent",
     padding: 20,
     marginBottom: 20,
   },
   input: {
+    textAlign: "center",
     fontSize: 25,
     width: "100%",
     height: 40,
@@ -220,35 +236,49 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     alignItems: "center",
     marginBottom: 40,
+    backgroundColor: "transparent",
   },
   nombre_input: {
+    textAlign: "center",
     fontSize: 25,
     alignItems: "center",
     marginBottom: 20,
+    backgroundColor: "transparent",
   },
   nombre_login: {
+    textAlign: "center",
     fontSize: 50,
     fontWeight: "700",
     alignItems: "center",
     marginBottom: 20,
+    backgroundColor: "transparent",
+    textShadowColor: "#000",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 5,
   },
   nombre_perfil: {
+    textAlign: "center",
     fontSize: 50,
     fontWeight: "700",
-    alignItems: "center",
+    textAlign: "center",
+    backgroundColor: "transparent",
+    textShadowColor: "#000",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 5,
   },
   button: {
+    textAlign: "center",
     marginBottom: 20,
     marginTop: 20,
     color: "red",
   },
-  imageContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   imagen1: {
     width: screenWidth / 2,
-    aspectRatio: 1, // Para mantener la relación de aspecto original de la imagen
+    aspectRatio: 1,
+  },
+  fieldContainer: {
+    width: "100%",
+    paddingHorizontal: 20,
+    marginTop: 20,
   },
 });
