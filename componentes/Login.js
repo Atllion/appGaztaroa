@@ -4,6 +4,9 @@ import axios from "axios";
 import CampobaseComponent from "./CampobaseComponent";
 import { createStackNavigator, Screen } from "@react-navigation/stack";
 import { Dimensions } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { TouchableOpacity } from "react-native";
+
 const screenWidth = Dimensions.get("window").width;
 const Stack = createStackNavigator();
 
@@ -20,6 +23,7 @@ export const firebaseConfig = {
 };
 
 export default function Login(props) {
+  const [cuentaCreada, setCuentaCreada] = useState(false);
   const [nombre, setNombre] = useState();
   const [apellido, setApellido] = useState();
   const [avatar, setAvatar] = useState();
@@ -29,11 +33,37 @@ export default function Login(props) {
   const [email, setEmail] = useState("");
   const [inicioSesion, setInicioSesion] = useState(false);
   const [password, setPassword] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
+
   console.log(props.updateLogin);
   console.log("props.updateLogin");
   console.log("------------");
   const uri =
     "https://img.freepik.com/vector-gratis/vector-fondo-acuarela-floral-primavera-verde-ilustracion-hoja_53876-126350.jpg?w=996&t=st=1687263023~exp=1687263623~hmac=427bd272ae2bc7b9a63e97d62b53c3f71eaebd1e4911aeb598574cbc13e97377";
+
+  const handleSelectImage = async () => {
+    try {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        alert("Selecciona una foto.");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.cancelled) {
+        setSelectedImage(result.uri);
+      }
+    } catch (error) {
+      console.error("Error al seleccionar una imagen:", error);
+    }
+  };
 
   const handleCreateAccount = () => {
     const url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${firebaseConfig.apiKey}`;
@@ -42,25 +72,109 @@ export default function Login(props) {
       password: password,
       returnSecureToken: true,
     };
-    useEffect(() => {
-      if (inicioSesion) {
-        console.log("La sesión está iniciada");
-      } else {
-        console.log("La sesión no está iniciada");
-      }
-    }, [inicioSesion]);
+
     console.log("Datos de creación de cuenta:", data);
 
     axios
       .post(url, data)
       .then((response) => {
         console.log("Cuenta creada");
+        setCuentaCreada(true);
         const user = response.data;
         console.log(user);
       })
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  useEffect(() => {
+    if (inicioSesion || cuentaCreada) {
+      console.log("La sesión está iniciada");
+      handleRegister();
+    } else {
+      console.log("La sesión no está iniciada");
+    }
+  }, [inicioSesion, cuentaCreada]);
+
+  const handleRegister = () => {
+    return (
+      <>
+        <Text style={styles.nombre_login}>Resgitro Datos</Text>
+        <Text style={styles.nombre_input}>Introduce el correo electrónico</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Correo electrónico"
+          onChangeText={(text) => setEmail(text)}
+          value={email}
+        />
+
+        <Text style={styles.nombre_input}>Introduce la contraseña</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Contraseña"
+          onChangeText={(text) => setPassword(text)}
+          value={password}
+          secureTextEntry
+        />
+        <Button
+          onPress={handleCreateAccount}
+          style={styles.button}
+          title="Crear cuenta"
+        />
+        <Text style={styles.nombre_input}> </Text>
+      </>
+    );
+  };
+
+  const handleCreatePerfil = async () => {
+    const data = {
+      nombre: nombre,
+      apellido: apellido,
+      pais: pais,
+    };
+
+    const formData = new FormData();
+    formData.append("imagen", {
+      uri: selectedImage,
+      type: "image/jpeg",
+      name: "avatar.jpg",
+    });
+
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    firebase.initializeApp(firebaseConfig);
+
+    const storageRef = firebase.storage().ref();
+
+    try {
+      // Subir la imagen a Firebase Storage
+      const response = await fetch(selectedImage);
+      const blob = await response.blob();
+      const imageRef = storageRef.child("avatars/avatar.jpg");
+      await imageRef.put(blob);
+
+      // Obtener la URL de descarga de la imagen
+      const imageUrl = await imageRef.getDownloadURL();
+
+      // Agregar la URL de la imagen al objeto de datos
+      data.imagenUrl = imageUrl;
+
+      // Guardar los datos en la base de datos de Firebase Realtime Database
+      await axios.post(
+        "https://appgaztaroa-a3165-default-rtdb.europe-west1.firebasedatabase.app/usuarios.json",
+        data
+      );
+
+      console.log("Perfil creado:", data);
+      setCuentaCreada(false);
+      handleSignIn();
+      setInicioSesion(true);
+    } catch (error) {
+      console.error("Error al crear el perfil:", error);
+    }
   };
 
   const handleSignIn = () => {
@@ -92,6 +206,17 @@ export default function Login(props) {
         // console.log("error");
         // console.log("//////////////////////////");
       });
+  };
+
+  const handleSignOut = () => {
+    updateLogin(false);
+    setInicioSesion(false);
+    setEmail("");
+    setPassword("");
+    setNombre("");
+    setApellido("");
+    setAvatar("");
+    setPais("");
   };
 
   useEffect(() => {
@@ -128,7 +253,7 @@ export default function Login(props) {
           console.error(error);
         });
     }
-  }, [inicioSesion]);
+  }, [inicioSesion, email]);
 
   //   useEffect(() => {
   //     console.log(
@@ -156,54 +281,119 @@ export default function Login(props) {
         }}
         style={styles.backgroundImage}
       />
-      {inicioSesion ? (
-        <View style={styles.content}>
-          <Text style={styles.nombre_perfil}>Perfil</Text>
-          <Image source={{ uri: avatar }} style={styles.imagen1} />
-          <View style={styles.fieldContainer}>
-            <Text style={styles.nombre_input}>Nombre:</Text>
-            <TextInput style={styles.input} value={nombre} editable={false} />
+      {cuentaCreada ? (
+        <>
+          {/* Mostrar todos los parámetros de registro */}
+          <View style={styles.content}>
+            <Text style={styles.nombre_login}>Registro</Text>
+            <Text style={styles.nombre_input}>Introduce tu nombre</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Nombre"
+              onChangeText={(text) => setNombre(text)}
+              value={nombre}
+            />
 
-            <Text style={styles.nombre_input}>Apellido:</Text>
-            <TextInput style={styles.input} value={apellido} editable={false} />
-
-            <Text style={styles.nombre_input}>País:</Text>
-            <TextInput style={styles.input} value={pais} editable={false} />
+            <Text style={styles.nombre_input}>Introduce tu apellido</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Apellido"
+              onChangeText={(text) => setApellido(text)}
+              value={apellido}
+              secureTextEntry
+            />
+            <Text style={styles.nombre_input}>Introduce tu pais</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Apellido"
+              onChangeText={(text) => setPais(text)}
+              value={pais}
+              secureTextEntry
+            />
+            <TouchableOpacity onPress={handleSelectImage} style={styles.button}>
+              <Text style={styles.buttonText}>Seleccionar foto</Text>
+            </TouchableOpacity>
+            {selectedImage && (
+              <Image
+                source={{ uri: selectedImage }}
+                style={styles.selectedImage}
+              />
+            )}
+            <Button
+              onPress={handleCreatePerfil}
+              style={styles.button}
+              title="Crear cuenta"
+            />
+            <Text style={styles.nombre_input}> </Text>
           </View>
-        </View>
+        </>
       ) : (
-        <View style={styles.content}>
-          <Text style={styles.nombre_login}>Login</Text>
-          <Text style={styles.nombre_input}>
-            Introduce el correo electrónico
-          </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Correo electrónico"
-            onChangeText={(text) => setEmail(text)}
-            value={email}
-          />
+        <>
+          {/* Mostrar formulario de inicio de sesión */}
+          {inicioSesion ? (
+            <View style={styles.content}>
+              <Text style={styles.nombre_perfil}>Perfil</Text>
+              <Image source={{ uri: avatar }} style={styles.imagen1} />
+              <View style={styles.fieldContainer}>
+                <Text style={styles.nombre_input}>Nombre:</Text>
+                <TextInput
+                  style={styles.input}
+                  value={nombre}
+                  editable={false}
+                />
 
-          <Text style={styles.nombre_input}>Introduce la contraseña</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Contraseña"
-            onChangeText={(text) => setPassword(text)}
-            value={password}
-            secureTextEntry
-          />
-          <Button
-            onPress={handleCreateAccount}
-            style={styles.button}
-            title="Crear cuenta"
-          />
-          <Text style={styles.nombre_input}> </Text>
-          <Button
-            onPress={handleSignIn}
-            style={styles.button}
-            title="Iniciar sesión"
-          />
-        </View>
+                <Text style={styles.nombre_input}>Apellido:</Text>
+                <TextInput
+                  style={styles.input}
+                  value={apellido}
+                  editable={false}
+                />
+
+                <Text style={styles.nombre_input}>País:</Text>
+                <TextInput style={styles.input} value={pais} editable={false} />
+                <Button
+                  onPress={handleSignOut}
+                  title="Cerrar sesión"
+                  color="red"
+                  style={styles.button}
+                />
+              </View>
+            </View>
+          ) : (
+            <View style={styles.content}>
+              <Text style={styles.nombre_login}>Login</Text>
+              <Text style={styles.nombre_input}>
+                Introduce el correo electrónico
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Correo electrónico"
+                onChangeText={(text) => setEmail(text)}
+                value={email}
+              />
+
+              <Text style={styles.nombre_input}>Introduce la contraseña</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Contraseña"
+                onChangeText={(text) => setPassword(text)}
+                value={password}
+                secureTextEntry
+              />
+              <Button
+                onPress={handleCreateAccount}
+                style={styles.button}
+                title="Crear cuenta"
+              />
+              <Text style={styles.nombre_input}> </Text>
+              <Button
+                onPress={handleSignIn}
+                style={styles.button}
+                title="Iniciar sesión"
+              />
+            </View>
+          )}
+        </>
       )}
     </View>
   );
