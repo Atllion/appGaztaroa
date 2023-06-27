@@ -128,10 +128,14 @@ export default function Login(props) {
   };
 
   const handleCreatePerfil = async () => {
+    const imagenModelo =
+      "https://firebasestorage.googleapis.com/v0/b/appgaztaroa-a3165.appspot.com/o/ed.png?alt=media&token=e3397192-cf96-4fea-bb49-d2d60a432536";
     const data = {
       nombre: nombre,
       apellido: apellido,
       pais: pais,
+      avatar: imagenModelo,
+      mail: email,
     };
 
     const formData = new FormData();
@@ -145,30 +149,26 @@ export default function Login(props) {
       formData.append(key, value);
     });
 
-    firebase.initializeApp(firebaseConfig);
-
-    const storageRef = firebase.storage().ref();
-
     try {
-      // Subir la imagen a Firebase Storage
-      const response = await fetch(selectedImage);
-      const blob = await response.blob();
-      const imageRef = storageRef.child("avatars/avatar.jpg");
-      await imageRef.put(blob);
-
-      // Obtener la URL de descarga de la imagen
-      const imageUrl = await imageRef.getDownloadURL();
-
-      // Agregar la URL de la imagen al objeto de datos
-      data.imagenUrl = imageUrl;
-
-      // Guardar los datos en la base de datos de Firebase Realtime Database
       await axios.post(
         "https://appgaztaroa-a3165-default-rtdb.europe-west1.firebasedatabase.app/usuarios.json",
         data
       );
 
       console.log("Perfil creado:", data);
+      const storageRef = `https://firebasestorage.googleapis.com/v0/b/appgaztaroa-a3165.appspot.com/`;
+      const imageUrl = `${storageRef}imagenes/ssd.jpg`;
+
+      await fetch(
+        `https://console.firebase.google.com/project/appgaztaroa-a3165/storage/appgaztaroa-a3165.appspot.com/files?hl=es`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ imagenUrl: selectedImage }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       setCuentaCreada(false);
       handleSignIn();
       setInicioSesion(true);
@@ -192,19 +192,19 @@ export default function Login(props) {
       .then((response) => {
         console.log("Inicio de sesión exitoso");
         const user = response.data;
-        // console.log("--------------------------");
-        // console.log(user);
-        // console.log("--------------------------");
-        // Actualizar la propiedad isLogged a true
+        console.log("--------------------------");
+        console.log(user);
+        console.log("--------------------------");
+
         updateLogin(true);
         setEmail(user.email);
         setInicioSesion(true);
       })
       .catch((error) => {
-        // console.log("//////////////////////////");
+        console.log("//////////////////////////");
         console.log(error);
-        // console.log("error");
-        // console.log("//////////////////////////");
+        console.log("error");
+        console.log("//////////////////////////");
       });
   };
 
@@ -245,7 +245,6 @@ export default function Login(props) {
             console.log(usuarioEncontrado);
           } else {
             setnameUser("");
-            setApellido("");
           }
           //   console.log(filteredData);
         })
@@ -300,15 +299,13 @@ export default function Login(props) {
               placeholder="Apellido"
               onChangeText={(text) => setApellido(text)}
               value={apellido}
-              secureTextEntry
             />
             <Text style={styles.nombre_input}>Introduce tu pais</Text>
             <TextInput
               style={styles.input}
-              placeholder="Apellido"
+              placeholder="Pais"
               onChangeText={(text) => setPais(text)}
               value={pais}
-              secureTextEntry
             />
             <TouchableOpacity onPress={handleSelectImage} style={styles.button}>
               <Text style={styles.buttonText}>Seleccionar foto</Text>
